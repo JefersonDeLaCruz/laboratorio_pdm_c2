@@ -1,15 +1,13 @@
+# Ignorar toda la configuración del IDE
+.idea/
+
+# Si por alguna razón quieres guardar la estructura básica (opcional)
+# !.idea/modules.xml
+# !.idea/runConfigurations/
+
+# Otros archivos importantes que ya tienes pero conviene asegurar
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.gradle/
 local.properties
+/build/
+
