@@ -17,6 +17,9 @@ import com.example.laboratorio_pdm_c2.Entitys.Articulo;
 import com.example.laboratorio_pdm_c2.Entitys.Persona;
 import com.example.laboratorio_pdm_c2.Entitys.Prestamo;
 import com.example.laboratorio_pdm_c2.database.appDataBase;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointForward;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class PrestamoFragment extends Fragment {
 
@@ -74,8 +78,7 @@ public class PrestamoFragment extends Fragment {
 
     private void loadSpinnersData() {
         appDataBase.databaseWriteExcecutor.execute(() -> {
-            // Solo artículos que NO estén prestados
-            articulosDisponibles = db.articuloDao().getAllArticulos(); // Idealmente filtrar por esPrestado = false
+            articulosDisponibles = db.articuloDao().getAllArticulos();
             personasList = db.personaDao().getAllPersona();
         });
     }
@@ -84,14 +87,11 @@ public class PrestamoFragment extends Fragment {
         prestamo.devuelto = true;
         appDataBase.databaseWriteExcecutor.execute(() -> {
             db.prestamoDao().updatePrestamo(prestamo);
-            
-            // Marcar el artículo como disponible de nuevo
             Articulo articulo = db.articuloDao().getArticulo(prestamo.idarticulo);
             if (articulo != null) {
                 articulo.esPrestado = false;
                 db.articuloDao().updateArticulo(articulo);
             }
-            
             loadPrestamos();
             loadSpinnersData();
         });
@@ -99,7 +99,6 @@ public class PrestamoFragment extends Fragment {
     }
 
     private void showAddPrestamoDialog() {
-        // Filtrar artículos realmente disponibles para el spinner
         List<Articulo> disponibles = new ArrayList<>();
         for (Articulo a : articulosDisponibles) {
             if (!a.esPrestado) disponibles.add(a);
@@ -118,14 +117,37 @@ public class PrestamoFragment extends Fragment {
         Spinner spinnerPersonas = dialogView.findViewById(R.id.spinnerPersonas);
         TextInputEditText etFecha = dialogView.findViewById(R.id.etFechaDevolucion);
 
-        // Configurar Spinner Artículos
+        etFecha.setFocusable(false);
+        etFecha.setClickable(true);
+
+        etFecha.setOnClickListener(v -> {
+            // Restricción: No permitir fechas anteriores a hoy
+            CalendarConstraints constraints = new CalendarConstraints.Builder()
+                    .setValidator(DateValidatorPointForward.now())
+                    .build();
+
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                    .setTitleText("Fecha de devolución estimada")
+                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                    .setCalendarConstraints(constraints)
+                    .build();
+
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                TimeZone timeZoneUTC = TimeZone.getTimeZone("UTC");
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                format.setTimeZone(timeZoneUTC);
+                etFecha.setText(format.format(new Date(selection)));
+            });
+
+            datePicker.show(getParentFragmentManager(), "DATE_PICKER");
+        });
+
         List<String> nombresArticulos = new ArrayList<>();
         for (Articulo a : disponibles) nombresArticulos.add(a.nombre);
         ArrayAdapter<String> artAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, nombresArticulos);
         artAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerArticulos.setAdapter(artAdapter);
 
-        // Configurar Spinner Personas
         List<String> nombresPersonas = new ArrayList<>();
         for (Persona p : personasList) nombresPersonas.add(p.nombre);
         ArrayAdapter<String> perAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, nombresPersonas);
@@ -138,28 +160,30 @@ public class PrestamoFragment extends Fragment {
                     int perPos = spinnerPersonas.getSelectedItemPosition();
                     String fechaStr = etFecha.getText().toString();
 
+                    if (fechaStr.isEmpty()) {
+                        Toast.makeText(getContext(), "Debe seleccionar una fecha", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     try {
                         Prestamo nuevo = new Prestamo();
                         nuevo.idarticulo = disponibles.get(artPos).idarticulo;
                         nuevo.idpersona = personasList.get(perPos).idpersona;
-                        nuevo.fechaPrestamo = new Date(); // Hoy
+                        nuevo.fechaPrestamo = new Date();
                         nuevo.fechaDevolucionEstimada = dateFormat.parse(fechaStr);
                         nuevo.devuelto = false;
 
                         appDataBase.databaseWriteExcecutor.execute(() -> {
                             db.prestamoDao().insertPrestamo(nuevo);
-                            
-                            // Marcar artículo como prestado
                             Articulo a = disponibles.get(artPos);
                             a.esPrestado = true;
                             db.articuloDao().updateArticulo(a);
-                            
                             loadPrestamos();
                             loadSpinnersData();
                         });
                         Toast.makeText(getContext(), "Préstamo registrado", Toast.LENGTH_SHORT).show();
                     } catch (ParseException e) {
-                        Toast.makeText(getContext(), "Formato de fecha inválido", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error en el formato de fecha", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancelar", null);
