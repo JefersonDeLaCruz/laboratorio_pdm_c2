@@ -21,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView navbar;
     private TextView tvTitle, tvSubtitle;
+    private static final String KEY_TITLE = "header_title";
+    private static final String KEY_SUBTITLE = "header_subtitle";
 
 
     @Override
@@ -30,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            // Eliminamos el padding bottom del listener para que la BottomNavigationView maneje su propio espacio o quede pegada
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
@@ -38,14 +39,24 @@ public class MainActivity extends AppCompatActivity {
         setupViews();
         setupEvents();
 
-        // Cargar fragment inicial (Artículos)
-        if (savedInstanceState == null) {
+        if (savedInstanceState != null) {
+            //restaurar textos tras cambio de tema/configuracion
+            tvTitle.setText(savedInstanceState.getString(KEY_TITLE));
+            tvSubtitle.setText(savedInstanceState.getString(KEY_SUBTITLE));
+        } else {
+            //cargar fragment inicial (Artículos) por primera vez
             updateHeader("Gestión de Artículos", "Administra el inventario de recursos disponibles");
             replaceFragment(new ArticulosFragment());
         }
     }
 
-
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //guardar el estado actual de los textos
+        outState.putString(KEY_TITLE, tvTitle.getText().toString());
+        outState.putString(KEY_SUBTITLE, tvSubtitle.getText().toString());
+    }
 
     private void setupViews(){
         navbar = findViewById(R.id.nav_bar);

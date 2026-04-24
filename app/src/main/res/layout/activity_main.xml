@@ -22,18 +22,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Título"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
+            style="@style/Widget.App.TextView.HeaderTitle"/>
 
         <TextView
             android:id="@+id/tvMainSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Subtítulo"
-            android:textSize="14sp"
-            android:textColor="@color/black"
-            android:alpha="0.7"/>
+            style="@style/Widget.App.TextView.HeaderSubtitle"/>
     </LinearLayout>
 
     <FrameLayout

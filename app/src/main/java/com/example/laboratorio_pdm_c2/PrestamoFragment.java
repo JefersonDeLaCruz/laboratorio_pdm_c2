@@ -61,10 +61,10 @@ public class PrestamoFragment extends Fragment {
         rvPrestamos.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPrestamos.setAdapter(adapter);
 
-        // Usamos el nuevo nombre del listener del adaptador
+
         adapter.setOnCompletarClickListener(this::handleCompletar);
 
-        // Manejar el cambio de botones (simulando tabs)
+        //mnejar el cambio de botones (simulando tabs)
         toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
                 loadPrestamos();
@@ -83,7 +83,7 @@ public class PrestamoFragment extends Fragment {
         appDataBase.databaseWriteExcecutor.execute(() -> {
             List<Prestamo> todosLosPrestamos = db.prestamoDao().getAllPrestamo();
             
-            // Determinar qué filtro aplicar según el botón presionado
+            // btn presionado
             boolean filtrarCompletados = toggleGroup.getCheckedButtonId() == R.id.btnFiltrarCompletados;
             
             List<Prestamo> filtrados = new ArrayList<>();

@@ -122,7 +122,7 @@ public class fragment_persona extends Fragment {
     }
 
     private void confirmDelete(Persona persona) {
-        new AlertDialog.Builder(getContext())
+        new MaterialAlertDialogBuilder(getContext())
                 .setTitle("Eliminar Persona")
                 .setMessage("¿Estás seguro de que deseas eliminar a " + persona.nombre + "?")
                 .setPositiveButton("Eliminar", (dialog, which) -> {
