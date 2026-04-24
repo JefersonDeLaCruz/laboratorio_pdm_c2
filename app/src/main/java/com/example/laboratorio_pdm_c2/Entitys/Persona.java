@@ -8,7 +8,8 @@ public class Persona {
     @PrimaryKey(autoGenerate = true)
     public int idpersona;
     public String nombre;
-    public String apellido; // Nuevo campo
+    public String apellido;
     public String contacto;
-    public String direccion; // Nuevo campo
+    public String direccion;
+    public boolean activo = true; // Campo para borrado lógico
 }

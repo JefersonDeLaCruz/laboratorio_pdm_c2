@@ -2,6 +2,7 @@ package com.example.laboratorio_pdm_c2;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class fragment_persona extends Fragment {
 
@@ -101,6 +103,12 @@ public class fragment_persona extends Fragment {
                 return;
             }
 
+            // Validación de contacto (cell xxxx-xxxx o correo standard)
+            if (!isValidContacto(contacto)) {
+                Toast.makeText(getContext(), "Contacto inválido. Use formato xxxx-xxxx o un email válido.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             Persona p = isEdit ? personaToEdit : new Persona();
             p.nombre = nombre;
             p.apellido = apellido;
@@ -121,13 +129,25 @@ public class fragment_persona extends Fragment {
         builder.create().show();
     }
 
+    private boolean isValidContacto(String contacto) {
+        // Regex para teléfono xxxx-xxxx
+        Pattern phonePattern = Pattern.compile("^[0-9]{4}-[0-9]{4}$");
+        boolean isPhone = phonePattern.matcher(contacto).matches();
+
+        // Pattern de Android para Email
+        boolean isEmail = Patterns.EMAIL_ADDRESS.matcher(contacto).matches();
+
+        return isPhone || isEmail;
+    }
+
     private void confirmDelete(Persona persona) {
         new MaterialAlertDialogBuilder(getContext())
                 .setTitle("Eliminar Persona")
                 .setMessage("¿Estás seguro de que deseas eliminar a " + persona.nombre + "?")
                 .setPositiveButton("Eliminar", (dialog, which) -> {
                     appDataBase.databaseWriteExcecutor.execute(() -> {
-                        db.personaDao().deletePersona(persona);
+                        persona.activo = false;
+                        db.personaDao().updatePersona(persona);
                         loadPersonas();
                     });
                 })

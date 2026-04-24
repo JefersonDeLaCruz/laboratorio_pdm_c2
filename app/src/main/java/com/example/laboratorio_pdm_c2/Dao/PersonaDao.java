@@ -16,8 +16,11 @@ public interface PersonaDao {
     @Insert
     long insertPersona(Persona persona);
 
-    @Query("SELECT * FROM personas")
+    @Query("SELECT * FROM personas WHERE activo = 1")
     List<Persona> getAllPersona();
+
+    @Query("SELECT * FROM personas")
+    List<Persona> getAllPersonaIncluyendoInactivos();
 
     @Query("SELECT * FROM personas WHERE idpersona = :idpersona")
     Persona getPersona(int idpersona);

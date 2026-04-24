@@ -24,7 +24,7 @@ import com.example.laboratorio_pdm_c2.Entitys.Prestamo;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Categoria.class, Articulo.class, Persona.class, Prestamo.class}, version = 2, exportSchema = true)
+@Database(entities = {Categoria.class, Articulo.class, Persona.class, Prestamo.class}, version = 3, exportSchema = true)
 @TypeConverters({Converter.class})
 public abstract class appDataBase extends RoomDatabase {
 
@@ -45,6 +45,14 @@ public abstract class appDataBase extends RoomDatabase {
         }
     };
 
+    // Migración de la versión 2 a la 3: Agregando campo activo para borrado lógico
+    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE personas ADD COLUMN activo INTEGER NOT NULL DEFAULT 1");
+        }
+    };
+
     public static appDataBase getINSTANCE(Context context) {
         if (INSTANCE == null) {
             synchronized (appDataBase.class) {
@@ -54,7 +62,7 @@ public abstract class appDataBase extends RoomDatabase {
                             appDataBase.class,
                             "nexus_db"
                     )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .fallbackToDestructiveMigrationOnDowngrade()
                     .build();
                 }
