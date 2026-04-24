@@ -20,6 +20,7 @@ public interface PersonaDao {
     @Query("SELECT * FROM personas WHERE idpersona = :idpersona")
     PersonaDao getPersona(int idpersona);
 
+
     @Update
     long updatePersona(PersonaDao persona);
 
