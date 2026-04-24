@@ -6,7 +6,9 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
+import com.example.laboratorio_pdm_c2.Convertions.Converter;
 import com.example.laboratorio_pdm_c2.Dao.ArticuloDao;
 import com.example.laboratorio_pdm_c2.Dao.CategoriaDao;
 import com.example.laboratorio_pdm_c2.Dao.PersonaDao;
@@ -23,6 +25,7 @@ import java.util.concurrent.Executors;
 import kotlin.jvm.Synchronized;
 
 @Database(entities = {Categoria.class, Articulo.class, Persona.class, Prestamo.class}, version = 1,exportSchema = true)
+@TypeConverters({Converter.class})
 public abstract class appDataBase  extends RoomDatabase {
 
     public abstract CategoriaDao categoriaDao();
