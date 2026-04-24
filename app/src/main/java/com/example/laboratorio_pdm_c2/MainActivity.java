@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 if (id == R.id.item_1) {
                     selectedFragment = new ArticulosFragment();
                 } else if (id == R.id.item_2) {
-                    // Placeholder para PersonasFragment
+                    selectedFragment = new fragment_persona();
                 } else if (id == R.id.item_3) {
                     // Placeholder para PrestamosFragment
                 }
