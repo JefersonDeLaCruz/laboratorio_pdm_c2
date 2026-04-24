@@ -21,6 +21,7 @@ public interface PersonaDao {
     PersonaDao getPersona(int idpersona);
 
 
+
     @Update
     long updatePersona(PersonaDao persona);
 
