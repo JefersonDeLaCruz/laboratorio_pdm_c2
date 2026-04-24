@@ -1,10 +1,8 @@
 package com.example.laboratorio_pdm_c2;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
-import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -18,15 +16,11 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import androidx.fragment.app.Fragment;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView navbar;
-
+    private TextView tvTitle, tvSubtitle;
 
 
     @Override
@@ -43,47 +37,59 @@ public class MainActivity extends AppCompatActivity {
         setupViews();
         setupEvents();
 
-        // Cargar el fragmento por defecto (Artículos)
+        // Cargar fragment inicial (Artículos)
         if (savedInstanceState == null) {
-            loadFragment(new ArticulosFragment());
+            updateHeader("Gestión de Artículos", "Administra el inventario de recursos disponibles");
+            replaceFragment(new ArticulosFragment());
         }
     }
 
+
+
     private void setupViews(){
         navbar = findViewById(R.id.nav_bar);
+        tvTitle = findViewById(R.id.tvMainTitle);
+        tvSubtitle = findViewById(R.id.tvMainSubtitle);
     }
+
 
     private void setupEvents(){
         navbar.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Fragment selectedFragment = null;
+
                 int id = menuItem.getItemId();
 
                 if (id == R.id.item_1) {
-                    selectedFragment = new ArticulosFragment();
+                    updateHeader("Gestión de Artículos", "Administra el inventario de recursos disponibles");
+                    replaceFragment(new ArticulosFragment());
+                    return true;
                 } else if (id == R.id.item_2) {
-                    selectedFragment = new fragment_persona();
+                    updateHeader("Gestión de Personas", "Registro y control de usuarios del sistema");
+                    replaceFragment(new fragment_persona());
+                    return true;
                 } else if (id == R.id.item_3) {
-                    // Placeholder para PrestamosFragment
-                    selectedFragment = new PrestamoFragment();
-                }
-
-                if (selectedFragment != null) {
-                    loadFragment(selectedFragment);
+                    updateHeader("Gestión de Préstamos", "Control de préstamos activos y devoluciones");
+                    replaceFragment(new PrestamoFragment());
                     return true;
                 }
+
                 return false;
             }
         });
     }
 
+    private void updateHeader(String title, String subtitle) {
+        if (tvTitle != null && tvSubtitle != null) {
+            tvTitle.setText(title);
+            tvSubtitle.setText(subtitle);
+        }
+    }
 
-
-    private void loadFragment(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit();
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.commit();
     }
 }
