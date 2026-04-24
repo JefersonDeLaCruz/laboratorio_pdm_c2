@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.App.CardView.Item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,24 +20,25 @@
 
             <TextView
                 android:id="@+id/tvNombreCompleto"
+                style="@style/Widget.App.TextView.ItemTitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/tvContacto"
+                style="@style/Widget.App.TextView.ItemBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp" />
 
             <TextView
                 android:id="@+id/tvDireccion"
+                style="@style/Widget.App.TextView.ItemBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textSize="12sp"
-                android:textColor="@android:color/darker_gray" />
+                android:alpha="0.6" />
         </LinearLayout>
 
         <ImageButton
@@ -48,6 +47,7 @@
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/edit"
+            app:tint="?attr/colorOnSurfaceVariant"
             android:contentDescription="Editar" />
 
         <ImageButton
@@ -56,6 +56,7 @@
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/delete"
+            app:tint="?attr/colorError"
             android:contentDescription="Eliminar" />
 
     </LinearLayout>
