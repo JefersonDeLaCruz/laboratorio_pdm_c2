@@ -1,19 +1,23 @@
 package com.example.laboratorio_pdm_c2;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.laboratorio_pdm_c2.Entitys.Articulo;
-import com.example.laboratorio_pdm_c2.Entitys.Categoria;
-import com.example.laboratorio_pdm_c2.database.appDataBase;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private BottomNavigationView navbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,39 +30,39 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        setupViews();
+        setupEvents();
+    }
 
 
-        // 1. Obtener la instancia de la DB
-        appDataBase db = appDataBase.getINSTANCE(this);
 
-        // 2. Usar el executor que definiste en tu clase appDataBase
-        appDataBase.databaseWriteExcecutor.execute(() -> {
-            try {
-                // --- PRUEBA DE CATEGORÍA ---
-                Categoria cat = new Categoria();
-                cat.nombre = "Electrónica";
-                db.categoriaDao().insertCategoria(cat);
+    private void setupViews(){
 
-                // --- PRUEBA DE ARTÍCULO ---
-                // Nota: Asegúrate de que el id de la categoría coincida
-                // o que tu objeto Articulo esté bien configurado.
-                Articulo art = new Articulo();
-                art.nombre = "Cargador Tipo C";
-                art.descripcion = "Cargador rápido 25W";
-                art.idcategoria = 1; // Asumiendo que el ID generado fue 1
+        navbar = findViewById(R.id.nav_bar);
 
-                db.articuloDao().insertArticulo(art);
+    }
 
-                // --- CONSULTAR PARA VERIFICAR ---
-                int totalArticulos = db.articuloDao().getAllArticulos().size();
 
-                // Ver el resultado en el Logcat (Filtra por "NexusDB")
-                Log.d("NexusDB", "Prueba exitosa. Artículos en DB: " + totalArticulos);
+    private void setupEvents(){
+        navbar.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-            } catch (Exception e) {
-                Log.e("NexusDB", "Error en la base de datos: " + e.getMessage());
+                int id = menuItem.getItemId();
+
+                if (id == R.id.item_1) {
+                    Toast.makeText(MainActivity.this, "Artículos seleccionado", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (id == R.id.item_2) {
+                    Toast.makeText(MainActivity.this, "Personas seleccionado", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (id == R.id.item_3) {
+                    Toast.makeText(MainActivity.this, "Préstamos seleccionado", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+                return false;
             }
         });
-
     }
 }

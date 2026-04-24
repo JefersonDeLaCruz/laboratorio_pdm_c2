@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">laboratorio_pdm_c2</string>
+    <string name="text_label_articulos">Articulos</string>
+    <string name="text_label_personas">Personas</string>
+    <string name="text_label_prestamos">Prestamos</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

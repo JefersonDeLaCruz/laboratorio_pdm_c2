@@ -1,0 +1,197 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "b8182d74cb7fe9c813bd6a6daa7945a9",
+    "entities": [
+      {
+        "tableName": "categorias",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idcategoria` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nombre` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "idcategoria",
+            "columnName": "idcategoria",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nombre",
+            "columnName": "nombre",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "idcategoria"
+          ]
+        }
+      },
+      {
+        "tableName": "articulos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idarticulo` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nombre` TEXT, `descripcion` TEXT, `idcategoria` INTEGER NOT NULL, `esPrestado` INTEGER NOT NULL, FOREIGN KEY(`idcategoria`) REFERENCES `categorias`(`idcategoria`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "idarticulo",
+            "columnName": "idarticulo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nombre",
+            "columnName": "nombre",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "descripcion",
+            "columnName": "descripcion",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "idcategoria",
+            "columnName": "idcategoria",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "esPrestado",
+            "columnName": "esPrestado",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "idarticulo"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "categorias",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "idcategoria"
+            ],
+            "referencedColumns": [
+              "idcategoria"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "personas",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idpersona` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nombre` TEXT, `apellido` TEXT, `contacto` TEXT, `direccion` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "idpersona",
+            "columnName": "idpersona",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nombre",
+            "columnName": "nombre",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "apellido",
+            "columnName": "apellido",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "contacto",
+            "columnName": "contacto",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "direccion",
+            "columnName": "direccion",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "idpersona"
+          ]
+        }
+      },
+      {
+        "tableName": "prestamos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idprestamo` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `idarticulo` INTEGER NOT NULL, `idpersona` INTEGER NOT NULL, `fechaPrestamo` TEXT, `fechaDevolucionEstimada` TEXT, `devuelto` INTEGER NOT NULL, FOREIGN KEY(`idarticulo`) REFERENCES `articulos`(`idarticulo`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`idpersona`) REFERENCES `personas`(`idpersona`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "idprestamo",
+            "columnName": "idprestamo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idarticulo",
+            "columnName": "idarticulo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idpersona",
+            "columnName": "idpersona",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fechaPrestamo",
+            "columnName": "fechaPrestamo",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fechaDevolucionEstimada",
+            "columnName": "fechaDevolucionEstimada",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "devuelto",
+            "columnName": "devuelto",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "idprestamo"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "articulos",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "idarticulo"
+            ],
+            "referencedColumns": [
+              "idarticulo"
+            ]
+          },
+          {
+            "table": "personas",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "idpersona"
+            ],
+            "referencedColumns": [
+              "idpersona"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b8182d74cb7fe9c813bd6a6daa7945a9')"
+    ]
+  }
+}
