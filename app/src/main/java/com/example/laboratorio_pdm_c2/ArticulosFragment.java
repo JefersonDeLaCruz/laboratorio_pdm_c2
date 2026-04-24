@@ -1,64 +1,150 @@
 package com.example.laboratorio_pdm_c2;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ArticulosFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.laboratorio_pdm_c2.Entitys.Articulo;
+import com.example.laboratorio_pdm_c2.Entitys.Categoria;
+import com.example.laboratorio_pdm_c2.database.appDataBase;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ArticulosFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RecyclerView rvArticulos;
+    private ArticuloAdapter adapter;
+    private appDataBase db;
+    private List<Categoria> categoriasList = new ArrayList<>();
 
     public ArticulosFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ArticulosFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ArticulosFragment newInstance(String param1, String param2) {
-        ArticulosFragment fragment = new ArticulosFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_articulos, container, false);
+        View view = inflater.inflate(R.layout.fragment_articulos, container, false);
+
+        db = appDataBase.getINSTANCE(getContext());
+        rvArticulos = view.findViewById(R.id.rvArticulos);
+        FloatingActionButton fabAddArticulo = view.findViewById(R.id.fabAddArticulo);
+        FloatingActionButton fabAddCategoria = view.findViewById(R.id.fabAddCategoria);
+
+        adapter = new ArticuloAdapter();
+        rvArticulos.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvArticulos.setAdapter(adapter);
+
+        fabAddArticulo.setOnClickListener(v -> showAddArticuloDialog());
+        fabAddCategoria.setOnClickListener(v -> showAddCategoriaDialog());
+
+        loadArticulos();
+        loadCategorias();
+
+        return view;
+    }
+
+    private void loadArticulos() {
+        appDataBase.databaseWriteExcecutor.execute(() -> {
+            List<Articulo> articulos = db.articuloDao().getAllArticulos();
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> adapter.setArticulos(articulos));
+            }
+        });
+    }
+
+    private void loadCategorias() {
+        appDataBase.databaseWriteExcecutor.execute(() -> {
+            categoriasList = db.categoriaDao().getAllCategoria();
+        });
+    }
+
+    private void showAddCategoriaDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Nueva Categoría");
+
+        final EditText input = new EditText(getContext());
+        input.setHint("Nombre de la categoría (ej. Electrónica)");
+        builder.setView(input);
+
+        builder.setPositiveButton("Guardar", (dialog, which) -> {
+            String nombreCat = input.getText().toString().trim();
+            if (!nombreCat.isEmpty()) {
+                Categoria nuevaCat = new Categoria();
+                nuevaCat.nombre = nombreCat;
+                appDataBase.databaseWriteExcecutor.execute(() -> {
+                    db.categoriaDao().insertCategoria(nuevaCat);
+                    loadCategorias();
+                });
+                Toast.makeText(getContext(), "Categoría guardada", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancelar", null);
+        builder.show();
+    }
+
+    private void showAddArticuloDialog() {
+        if (categoriasList.isEmpty()) {
+            Toast.makeText(getContext(), "Primero debe registrar categorías", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_articulo, null);
+        builder.setView(dialogView);
+
+        TextInputEditText etNombre = dialogView.findViewById(R.id.etNombreArticulo);
+        TextInputEditText etDescripcion = dialogView.findViewById(R.id.etDescripcionArticulo);
+        Spinner spinnerCategorias = dialogView.findViewById(R.id.spinnerCategorias);
+
+        List<String> nombresCategorias = new ArrayList<>();
+        for (Categoria cat : categoriasList) {
+            nombresCategorias.add(cat.nombre);
+        }
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, nombresCategorias);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategorias.setAdapter(spinnerAdapter);
+
+        builder.setTitle("Registrar Artículo")
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    String nombre = etNombre.getText().toString().trim();
+                    String descripcion = etDescripcion.getText().toString().trim();
+                    int categoriaIndex = spinnerCategorias.getSelectedItemPosition();
+
+                    if (!nombre.isEmpty()) {
+                        Articulo nuevoArticulo = new Articulo();
+                        nuevoArticulo.nombre = nombre;
+                        nuevoArticulo.descripcion = descripcion;
+                        nuevoArticulo.idcategoria = categoriasList.get(categoriaIndex).idcategoria;
+                        nuevoArticulo.esPrestado = false;
+
+                        appDataBase.databaseWriteExcecutor.execute(() -> {
+                            db.articuloDao().insertArticulo(nuevoArticulo);
+                            loadArticulos();
+                        });
+                    } else {
+                        Toast.makeText(getContext(), "El nombre es obligatorio", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancelar", null);
+
+        builder.create().show();
     }
 }

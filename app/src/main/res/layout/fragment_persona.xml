@@ -4,20 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ArticulosFragment">
+    tools:context=".fragment_persona">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvArticulos"
+        android:id="@+id/rvPersonas"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_articulo" />
+        tools:listitem="@layout/item_persona" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddArticulo"
+        android:id="@+id/fabAddPersona"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -26,20 +26,6 @@
         android:src="@android:drawable/ic_input_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:contentDescription="Agregar Artículo" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddCategoria"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:src="@android:drawable/ic_menu_agenda"
-        app:fabSize="mini"
-        app:layout_constraintBottom_toTopOf="@+id/fabAddArticulo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:contentDescription="Agregar Categoría" />
+        app:contentDescription="Agregar Persona" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
