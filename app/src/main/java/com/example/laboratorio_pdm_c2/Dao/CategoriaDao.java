@@ -23,10 +23,10 @@ public interface CategoriaDao {
     Categoria getCategoria(int idcategoria);
 
     @Update
-    long updateCategoria(Categoria categoria);
+    int updateCategoria(Categoria categoria);
 
     @Delete
-    long deleteCategoria(Categoria categoria);
+    int deleteCategoria(Categoria categoria);
 
 
 }

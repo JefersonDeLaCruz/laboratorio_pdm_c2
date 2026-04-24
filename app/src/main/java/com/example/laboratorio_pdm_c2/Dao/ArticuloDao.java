@@ -23,10 +23,10 @@ public interface ArticuloDao {
     Articulo getArticulo(int idarticulo);
 
     @Update
-    long updateArticulo(Articulo articulo);
+    int updateArticulo(Articulo articulo);
 
     @Delete
-    long deleteArticulo(Articulo articulo);
+    int deleteArticulo(Articulo articulo);
 
 
 }
