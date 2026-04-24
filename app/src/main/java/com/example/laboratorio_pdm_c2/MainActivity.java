@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -32,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
         setupViews();
         setupEvents();
+
+        // Cargar fragment inicial (Artículos)
+        if (savedInstanceState == null) {
+            replaceFragment(new ArticulosFragment());
+        }
     }
 
 
@@ -51,18 +59,25 @@ public class MainActivity extends AppCompatActivity {
                 int id = menuItem.getItemId();
 
                 if (id == R.id.item_1) {
-                    Toast.makeText(MainActivity.this, "Artículos seleccionado", Toast.LENGTH_SHORT).show();
+                    replaceFragment(new ArticulosFragment());
                     return true;
                 } else if (id == R.id.item_2) {
-                    Toast.makeText(MainActivity.this, "Personas seleccionado", Toast.LENGTH_SHORT).show();
+                    replaceFragment(new PersonasFragment());
                     return true;
                 } else if (id == R.id.item_3) {
-                    Toast.makeText(MainActivity.this, "Préstamos seleccionado", Toast.LENGTH_SHORT).show();
+                    replaceFragment(new PrestamoFragment());
                     return true;
                 }
 
                 return false;
             }
         });
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.commit();
     }
 }
