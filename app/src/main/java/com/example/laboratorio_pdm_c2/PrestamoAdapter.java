@@ -22,7 +22,7 @@ import java.util.Locale;
 public class PrestamoAdapter extends RecyclerView.Adapter<PrestamoAdapter.PrestamoViewHolder> {
 
     private List<Prestamo> prestamos = new ArrayList<>();
-    private OnDevolverClickListener devolverListener;
+    private OnCompletarClickListener completarListener;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     @NonNull
@@ -38,7 +38,10 @@ public class PrestamoAdapter extends RecyclerView.Adapter<PrestamoAdapter.Presta
         Prestamo current = prestamos.get(position);
         appDataBase db = appDataBase.getINSTANCE(holder.itemView.getContext());
 
-        // Cargar nombres de forma asíncrona (o podrías usar un JOIN en el DAO para mejor rendimiento)
+        // Limpiar para evitar que se muestren datos de items reciclados
+        holder.tvArticulo.setText("Cargando...");
+        holder.tvPersona.setText("...");
+
         appDataBase.databaseWriteExcecutor.execute(() -> {
             Articulo articulo = db.articuloDao().getArticulo(current.idarticulo);
             Persona persona = db.personaDao().getPersona(current.idpersona);
@@ -53,8 +56,8 @@ public class PrestamoAdapter extends RecyclerView.Adapter<PrestamoAdapter.Presta
         String fechaD = current.fechaDevolucionEstimada != null ? dateFormat.format(current.fechaDevolucionEstimada) : "N/A";
         holder.tvFechas.setText("Desde: " + fechaP + " - Hasta: " + fechaD);
 
-        holder.tvEstado.setText(current.devuelto ? "Estado: Devuelto" : "Estado: Pendiente");
-        holder.btnDevolver.setVisibility(current.devuelto ? View.GONE : View.VISIBLE);
+        holder.tvEstado.setText(current.devuelto ? "Estado: Completado" : "Estado: Pendiente");
+        holder.btnCompletar.setVisibility(current.devuelto ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -69,7 +72,7 @@ public class PrestamoAdapter extends RecyclerView.Adapter<PrestamoAdapter.Presta
 
     class PrestamoViewHolder extends RecyclerView.ViewHolder {
         private TextView tvArticulo, tvPersona, tvFechas, tvEstado;
-        private Button btnDevolver;
+        private Button btnCompletar;
 
         public PrestamoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -77,22 +80,22 @@ public class PrestamoAdapter extends RecyclerView.Adapter<PrestamoAdapter.Presta
             tvPersona = itemView.findViewById(R.id.tvPersonaPrestamo);
             tvFechas = itemView.findViewById(R.id.tvFechasPrestamo);
             tvEstado = itemView.findViewById(R.id.tvEstadoPrestamo);
-            btnDevolver = itemView.findViewById(R.id.btnDevolver);
+            btnCompletar = itemView.findViewById(R.id.btnDevolver);
 
-            btnDevolver.setOnClickListener(v -> {
+            btnCompletar.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                if (devolverListener != null && position != RecyclerView.NO_POSITION) {
-                    devolverListener.onDevolverClick(prestamos.get(position));
+                if (completarListener != null && position != RecyclerView.NO_POSITION) {
+                    completarListener.onCompletarClick(prestamos.get(position));
                 }
             });
         }
     }
 
-    public interface OnDevolverClickListener {
-        void onDevolverClick(Prestamo prestamo);
+    public interface OnCompletarClickListener {
+        void onCompletarClick(Prestamo prestamo);
     }
 
-    public void setOnDevolverClickListener(OnDevolverClickListener listener) {
-        this.devolverListener = listener;
+    public void setOnCompletarClickListener(OnCompletarClickListener listener) {
+        this.completarListener = listener;
     }
 }

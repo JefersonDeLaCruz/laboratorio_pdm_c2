@@ -17,6 +17,7 @@ import com.example.laboratorio_pdm_c2.Entitys.Articulo;
 import com.example.laboratorio_pdm_c2.Entitys.Persona;
 import com.example.laboratorio_pdm_c2.Entitys.Prestamo;
 import com.example.laboratorio_pdm_c2.database.appDataBase;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -36,6 +37,7 @@ public class PrestamoFragment extends Fragment {
     private RecyclerView rvPrestamos;
     private PrestamoAdapter adapter;
     private appDataBase db;
+    private MaterialButtonToggleGroup toggleGroup;
     private List<Articulo> articulosDisponibles = new ArrayList<>();
     private List<Persona> personasList = new ArrayList<>();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -51,13 +53,22 @@ public class PrestamoFragment extends Fragment {
 
         db = appDataBase.getINSTANCE(getContext());
         rvPrestamos = view.findViewById(R.id.rvPrestamos);
+        toggleGroup = view.findViewById(R.id.toggleGroupPrestamos);
         FloatingActionButton fabAddPrestamo = view.findViewById(R.id.fabAddPrestamo);
 
         adapter = new PrestamoAdapter();
         rvPrestamos.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPrestamos.setAdapter(adapter);
 
-        adapter.setOnDevolverClickListener(this::handleDevolucion);
+        // Usamos el nuevo nombre del listener del adaptador
+        adapter.setOnCompletarClickListener(this::handleCompletar);
+
+        // Manejar el cambio de botones (simulando tabs)
+        toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                loadPrestamos();
+            }
+        });
 
         fabAddPrestamo.setOnClickListener(v -> showAddPrestamoDialog());
 
@@ -69,9 +80,20 @@ public class PrestamoFragment extends Fragment {
 
     private void loadPrestamos() {
         appDataBase.databaseWriteExcecutor.execute(() -> {
-            List<Prestamo> prestamos = db.prestamoDao().getAllPrestamo();
+            List<Prestamo> todosLosPrestamos = db.prestamoDao().getAllPrestamo();
+            
+            // Determinar qué filtro aplicar según el botón presionado
+            boolean filtrarCompletados = toggleGroup.getCheckedButtonId() == R.id.btnFiltrarCompletados;
+            
+            List<Prestamo> filtrados = new ArrayList<>();
+            for (Prestamo p : todosLosPrestamos) {
+                if (p.devuelto == filtrarCompletados) {
+                    filtrados.add(p);
+                }
+            }
+
             if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> adapter.setPrestamos(prestamos));
+                getActivity().runOnUiThread(() -> adapter.setPrestamos(filtrados));
             }
         });
     }
@@ -83,7 +105,7 @@ public class PrestamoFragment extends Fragment {
         });
     }
 
-    private void handleDevolucion(Prestamo prestamo) {
+    private void handleCompletar(Prestamo prestamo) {
         prestamo.devuelto = true;
         appDataBase.databaseWriteExcecutor.execute(() -> {
             db.prestamoDao().updatePrestamo(prestamo);
@@ -95,7 +117,7 @@ public class PrestamoFragment extends Fragment {
             loadPrestamos();
             loadSpinnersData();
         });
-        Toast.makeText(getContext(), "Artículo devuelto", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Préstamo completado", Toast.LENGTH_SHORT).show();
     }
 
     private void showAddPrestamoDialog() {
@@ -121,7 +143,6 @@ public class PrestamoFragment extends Fragment {
         etFecha.setClickable(true);
 
         etFecha.setOnClickListener(v -> {
-            // Restricción: No permitir fechas anteriores a hoy
             CalendarConstraints constraints = new CalendarConstraints.Builder()
                     .setValidator(DateValidatorPointForward.now())
                     .build();
