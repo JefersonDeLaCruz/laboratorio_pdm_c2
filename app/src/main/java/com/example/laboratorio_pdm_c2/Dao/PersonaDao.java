@@ -9,20 +9,20 @@ import androidx.room.Update;
 
 import java.util.List;
 
-public interface Persona {
+public interface PersonaDao {
 
     @Insert
-    long insertPersona(Persona persona);
+    long insertPersona(PersonaDao persona);
 
     @Query("SELECT * FROM personas")
-    List<Persona> getAllPersona();
+    List<PersonaDao> getAllPersona();
 
     @Query("SELECT * FROM personas WHERE idpersona = :idpersona")
-    Persona getPersona(int idpersona);
+    PersonaDao getPersona(int idpersona);
 
     @Update
-    long updatePersona(Persona persona);
+    long updatePersona(PersonaDao persona);
 
     @Delete
-    long deletePersona(Persona persona);
+    long deletePersona(PersonaDao persona);
 }

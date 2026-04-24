@@ -7,7 +7,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.example.laboratorio_pdm_c2.Dao.ArticuloDao;
 import com.example.laboratorio_pdm_c2.Dao.CategoriaDao;
+import com.example.laboratorio_pdm_c2.Dao.PersonaDao;
+import com.example.laboratorio_pdm_c2.Dao.PrestamoDao;
 import com.example.laboratorio_pdm_c2.Entitys.Articulo;
 import com.example.laboratorio_pdm_c2.Entitys.Categoria;
 import com.example.laboratorio_pdm_c2.Entitys.Persona;
@@ -23,6 +26,10 @@ import kotlin.jvm.Synchronized;
 public abstract class appDataBase  extends RoomDatabase {
 
     public abstract CategoriaDao categoriaDao();
+    public abstract ArticuloDao articuloDao();
+    public abstract PersonaDao personaDao();
+    public abstract PrestamoDao prestamoDao();
+
 
     private static volatile appDataBase INSTANCE;
 
