@@ -2,18 +2,30 @@ package com.example.laboratorio_pdm_c2;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import com.example.laboratorio_pdm_c2.Entitys.Articulo;
 import com.example.laboratorio_pdm_c2.Entitys.Categoria;
 import com.example.laboratorio_pdm_c2.database.appDataBase;
 
 public class MainActivity extends AppCompatActivity {
+
+    private BottomNavigationView navbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,5 +72,52 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        setupViews();
+        setupEvents();
+
+        // Cargar fragment inicial (Artículos)
+        if (savedInstanceState == null) {
+            replaceFragment(new ArticulosFragment());
+        }
+    }
+
+
+
+    private void setupViews(){
+
+        navbar = findViewById(R.id.nav_bar);
+
+    }
+
+
+    private void setupEvents(){
+        navbar.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+                int id = menuItem.getItemId();
+
+                if (id == R.id.item_1) {
+                    replaceFragment(new ArticulosFragment());
+                    return true;
+                } else if (id == R.id.item_2) {
+                    replaceFragment(new PersonasFragment());
+                    return true;
+                } else if (id == R.id.item_3) {
+                    replaceFragment(new PrestamoFragment());
+                    return true;
+                }
+
+                return false;
+            }
+        });
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.commit();
     }
 }
