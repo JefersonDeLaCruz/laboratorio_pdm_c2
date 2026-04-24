@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.laboratorio_pdm_c2.Entitys.Persona;
 import com.example.laboratorio_pdm_c2.database.appDataBase;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -69,7 +70,7 @@ public class fragment_persona extends Fragment {
     }
 
     private void showPersonaDialog(Persona personaToEdit) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_persona, null);
         builder.setView(dialogView);
 

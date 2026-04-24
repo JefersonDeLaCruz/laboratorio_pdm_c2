@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.laboratorio_pdm_c2.Entitys.Articulo;
 import com.example.laboratorio_pdm_c2.Entitys.Categoria;
 import com.example.laboratorio_pdm_c2.database.appDataBase;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -75,7 +76,7 @@ public class ArticulosFragment extends Fragment {
     }
 
     private void showAddCategoriaDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
         builder.setTitle("Nueva Categoría");
 
         final EditText input = new EditText(getContext());
@@ -104,7 +105,7 @@ public class ArticulosFragment extends Fragment {
             return;
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_articulo, null);
         builder.setView(dialogView);
 

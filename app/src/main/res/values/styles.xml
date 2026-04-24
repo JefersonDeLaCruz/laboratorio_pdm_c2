@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.App" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+    </style>
+
+    <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+        <item name="paddingBottomSystemWindowInsets">false</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorSurface">@color/md_theme_surface</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item>
+    </style>
+
+    <!-- Estilo para los botones de los Diálogos (Outlined) -->
+    <style name="Widget.App.Button.OutlinedButton.Dialog" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:insetTop">4dp</item>
+        <item name="android:insetBottom">2dp</item>
+
+    </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Button.OutlinedButton.Dialog</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.Button.OutlinedButton.Dialog</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.App.Button.OutlinedButton.Dialog</item>
+        
+
+    </style>
+
+</resources>
